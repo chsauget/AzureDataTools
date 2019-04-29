@@ -1,0 +1,16 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  },
+  "AzureSubScriptionId": "dc928d7c-7b8c-4aeb-b6f0-c256837bf92b",
+  "ResourceGroup": "rgp-grt-vmi-transvprd",
+  "AzureAd": {
+    "AuthorityUrl": "https://login.microsoftonline.com/3c89f02a-e35e-4e6c-b127-9a27fd59f5ea/oauth2/token",
+    "TenantId": "4ca47367-de12-411b-adb0-9f6675c33f97",
+    "ClientId": "565ad8a0-b7e5-433d-8ae3-9268d28e5511",
+    "ClientSecret": "9G3teAXwqt2Dzcgj6iNhgzsyKorNr4P9hDQGveO4PQs="
+
+  }
+}
