@@ -4,9 +4,12 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="ExcelDataReader" Version="3.6.0" />
+    <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.20.0" />
     <PackageReference Include="Microsoft.Azure.Management.Sql.Fluent" Version="1.20.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
+    <PackageReference Include="Microsoft.SharePointOnline.CSOM" Version="16.1.8810.1200" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

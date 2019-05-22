@@ -10,11 +10,21 @@ using Functions.Infrastructure.Config;
 using System.Net.Http;
 using Functions.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SharePoint.Client;
+using System.Net;
+using ExcelDataReader;
+using System.Data;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace AzureDataTools
 {
     public static class Excel
     {
+        static Excel()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        }
         [FunctionName("load-excel-sharepoint")]
         public static async Task<IActionResult> LoadExcelSharepoint([HttpTrigger(AuthorizationLevel.Function, "post", Route = "load/excel/sharepoint")]
             HttpRequestMessage req,
@@ -22,21 +32,78 @@ namespace AzureDataTools
         {
             log.LogInformation($"");
 
-            await req.Content.ReadAsAsync<DataWarehouseLocator>();
+            ExcelConfiguration conf = await req.Content.ReadAsAsync<ExcelConfiguration>();
+            var requestUri = new Uri(conf.path);
+            var cred = new SharePointOnlineCredentials(conf.sharepointLogin, conf.sharepointPassword.AsSecureString());
 
-            return new OkResult();
+            var excelFileContent = await DownloadFile(requestUri, cred);
+
+            var dataSet = BuildDataset(excelFileContent);
+
+            if (!dataSet.Tables.Contains(conf.sheet))
+            {
+                return new BadRequestObjectResult($"Unable to find {conf.sheet} sheet");
+            }
+            return new OkObjectResult(JsonConvert.SerializeObject(dataSet.Tables[conf.sheet]));
         }
+
         public class ExcelConfiguration
         {
             public string path { get; set; }
             public string sheet { get; set; }
 
-            public SharepointCredential sharepointCredential { get; set; }
+            public string sharepointLogin { get; set; }
+            public string sharepointPassword { get; set; }
 
         }
-        public class SharepointCredential
+        private static async Task<byte[]> DownloadFile(Uri fileUri, SharePointOnlineCredentials credentials)
         {
-            public string accountName
+            const string SPOIDCRL = "SPOIDCRL";
+
+            var authCookie = credentials.GetAuthenticationCookie(fileUri);
+            var fedAuthString = authCookie.TrimStart($"{SPOIDCRL}=".ToCharArray());
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(fileUri, new Cookie(SPOIDCRL, fedAuthString));
+
+            var securityHandler = new HttpClientHandler
+            {
+                Credentials = credentials,
+                CookieContainer = cookieContainer
+            };
+
+            using (var httpClient = new HttpClient(securityHandler))
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, fileUri))
+                {
+                    var response = await httpClient.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+
+                    var content = await response.Content.ReadAsByteArrayAsync();
+
+                    return content;
+                }
+            }
         }
+        private static DataSet BuildDataset(byte[] rawContent)
+        {
+            using (var ms = new MemoryStream(rawContent))
+            {
+                ms.Position = 0;
+
+                IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(ms);
+                DataSet result = excelReader.AsDataSet(new ExcelDataSetConfiguration
+                {
+                    UseColumnDataType = true,
+
+                    ConfigureDataTable = tableReader => new ExcelDataTableConfiguration
+                    {
+                        UseHeaderRow = true
+                    }
+                });
+
+                return result;
+            }
+        }
+
     }
 }
