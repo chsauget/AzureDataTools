@@ -16,6 +16,8 @@ using ExcelDataReader;
 using System.Data;
 using System.Text;
 using Newtonsoft.Json;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureDataTools
 {
@@ -46,7 +48,33 @@ namespace AzureDataTools
             }
             return new OkObjectResult(JsonConvert.SerializeObject(dataSet.Tables[conf.sheet]));
         }
+        [FunctionName("load-blob-excel")]
+        public static async Task<IActionResult> LoadExcelBlob([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "load/excel/blob")]
+            HttpRequestMessage req,
+            ILogger log)
+        {
+            
+            log.LogInformation($"");
 
+            ExcelConfiguration conf = await req.Content.ReadAsAsync<ExcelConfiguration>();
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(conf.blobConnectionString);
+
+            CloudBlobClient serviceClient = storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer container = serviceClient.GetContainerReference(conf.blobContainerName);
+            CloudBlockBlob blob = container.GetBlockBlobReference(conf.path);
+
+            var ms = new MemoryStream();
+            await blob.DownloadToStreamAsync(ms);
+            var dataSet = BuildDataset(ms.ToArray());
+            
+            if (!dataSet.Tables.Contains(conf.sheet))
+            {
+                return new BadRequestObjectResult($"Unable to find {conf.sheet} sheet");
+            }
+            return new OkObjectResult(JsonConvert.SerializeObject(dataSet.Tables[conf.sheet]));
+
+
+        }
         public class ExcelConfiguration
         {
             public string path { get; set; }
@@ -55,6 +83,8 @@ namespace AzureDataTools
             public string sharepointLogin { get; set; }
             public string sharepointPassword { get; set; }
 
+            public string blobConnectionString { get; set; }
+            public string blobContainerName { get; set; }
         }
         private static async Task<byte[]> DownloadFile(Uri fileUri, SharePointOnlineCredentials credentials)
         {
