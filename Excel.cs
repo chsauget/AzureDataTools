@@ -48,8 +48,8 @@ namespace AzureDataTools
             }
             return new OkObjectResult(JsonConvert.SerializeObject(dataSet.Tables[conf.sheet]));
         }
-        [FunctionName("load-blob-sharepoint")]
-        public static async Task<IActionResult> LoadExcelBlob([HttpTrigger(AuthorizationLevel.Function, "post", Route = "load/excel/blob")]
+        [FunctionName("load-blob-excel")]
+        public static async Task<IActionResult> LoadExcelBlob([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "load/excel/blob")]
             HttpRequestMessage req,
             ILogger log)
         {
