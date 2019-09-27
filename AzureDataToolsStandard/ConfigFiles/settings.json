@@ -1,0 +1,22 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  },
+  "AzureSubScriptionId": "xxxxxx-xxxxx-xxxxx-xxxxx-xxxxx",
+  "ResourceGroup": "xxxxx-xxxx-xxxx-xxxxxx",
+  "AzureAd": {
+    "AuthorityUrl": "https://login.microsoftonline.com/xxxxxxx/oauth2/token",
+    "Authority": "https://login.windows.net/",
+    "TenantId": "xxxxxxx-xxxx-xxxx-xxxx-xxxx",
+    "ClientId": "xxxxx-b7e5-433d-8ae3-9268d28e5511",
+    "ClientSecret": "xxxxxxx"
+
+  },
+  "PowerBIAdmin": {
+    "BaseAddress": "https://api.powerbi.com/v1.0/myorg/admin",
+    "PowerBILogin": "@",
+    "PowerBIPassword": ""
+  }
+}

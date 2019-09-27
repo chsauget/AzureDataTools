@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.20.0" />
     <PackageReference Include="Microsoft.Azure.Management.Sql.Fluent" Version="1.20.0" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.2.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.1.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
     <PackageReference Include="Microsoft.SharePointOnline.CSOM" Version="16.1.8810.1200" />
   </ItemGroup>

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Functions.Infrastructure.Config;
-using Functions.Infrastructure;
 using Functions.Helpers;
+using Functions.Infrastructure;
+using Functions.Infrastructure.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Functions.Models
 {
