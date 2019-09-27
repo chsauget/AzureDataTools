@@ -264,3 +264,4 @@ __pycache__/
 *.pyc
 /Properties/PublishProfiles/adflivre - Web Deploy.pubxml
 /Properties/PublishProfiles/fnc-grt-lab-we-utils - Web Deploy.pubxml
+/Properties/PublishProfiles
