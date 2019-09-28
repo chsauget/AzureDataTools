@@ -13,10 +13,5 @@
     "ClientId": "xxxxx-b7e5-433d-8ae3-9268d28e5511",
     "ClientSecret": "xxxxxxx"
 
-  },
-  "PowerBIAdmin": {
-    "BaseAddress": "https://api.powerbi.com/v1.0/myorg/admin",
-    "PowerBILogin": "@",
-    "PowerBIPassword": ""
   }
 }
