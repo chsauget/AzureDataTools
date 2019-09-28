@@ -52,7 +52,7 @@ namespace AzureDataToolsStandard
             }
             catch(Exception e)
             {
-                return req.CreateResponse(HttpStatusCode.BadRequest, e.InnerException);
+                return req.CreateResponse(HttpStatusCode.BadRequest, e.Message);
             }
              
         }
