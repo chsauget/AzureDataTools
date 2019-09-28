@@ -2,22 +2,20 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true"
   },
-  "AzureSubScriptionId": "xxxxxx-xxxxx-xxxxx-xxxxx-xxxxx",
-  "ResourceGroup": "xxxxx-xxxx-xxxx-xxxxxx",
   "AzureAd": {
-    "AuthorityUrl": "https://login.microsoftonline.com/xxxxx-xxxx-xxxx-xxxxx-xxxxxxx",
-    "TenantId": "xxxxxxx-xxxx-xxxx-xxxx-xxxx",
-    "ClientId": "xxxxx-b7e5-433d-8ae3-9268d28e5511",
-    "ClientSecret": "xxxxxxx",
-    "UseMSI": true
+    "AuthorityUrl": "https://login.microsoftonline.com/x-x-x-x-bbd960991532",
+    "TenantId": "xxxxx-1xx08e-x-x-xx",
+    "ClientId": "6e8b125d-9d67-xx-xx-ef25a628f15c",
+    "ClientSecret": "D@-6iixy@x",
+    "UseMSI" :  true
   },
   "O365AuditLogs": {
-    "BaseAddress": "https://manage.office.com/api/v1.0/xxxxx-xxxx-xxxx-xxxxx-xxxxxxx/activity/feed/",
+    "BaseAddress": "https://manage.office.com/api/v1.0/x-x-x-b718-x/activity/feed/",
     "Resource": "https://manage.office.com",
-    "AppId": "xxxxx-9d67-4ad4-xxxxx-ef25a628f15c",
-    "AppSecret": "D@-6ixxxxxxxxxv9qZe1iso"
+    "AppId": "xxx-9d67-4ad4-x-xx",
+    "AppSecret": "D@-6ii.y@xx"
   },
   "SSAS": {
     "Resource": "https://*.asazure.windows.net"
