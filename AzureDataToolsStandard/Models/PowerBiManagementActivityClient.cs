@@ -35,7 +35,7 @@ namespace Functions.Models
             Client.BaseAddress = new Uri(Settings.O365AuditLogs.BaseAddress);
             Client.DefaultRequestHeaders.Clear();
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
-                ADALHelper.GetManagementToken(Settings.O365AuditLogs.Resource, Settings.AzureAd.Authority, Settings.O365AuditLogs.AppId, Settings.O365AuditLogs.AppSecret
+                ADALHelper.GetManagementToken(Settings.O365AuditLogs.Resource, Settings.AzureAd.AuthorityUrl, Settings.O365AuditLogs.AppId, Settings.O365AuditLogs.AppSecret
                     )
                 );
         }
