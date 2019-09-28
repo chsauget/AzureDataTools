@@ -31,13 +31,27 @@ namespace Functions.Models
         /// <param name="credentials"></param>
         public O365ManagementActivityClient()
         {
+            string _token = string.Empty;
+            if (Settings.AzureAd.UseMSI)
+            {
+                try
+                {
+                    _token = ADALHelper.GetMsiTokenAsync(Settings.O365AuditLogs.Resource).Result;
+                }
+                catch(Exception e)
+                {
+                    _token = ADALHelper.GetAppToken(Settings.AzureAd.AuthorityUrl, Settings.O365AuditLogs.Resource, Settings.O365AuditLogs.AppId, Settings.O365AuditLogs.AppSecret).Result;
+                }
+                
+            }
+            else
+            {
+                _token = ADALHelper.GetAppToken(Settings.AzureAd.AuthorityUrl, Settings.O365AuditLogs.Resource, Settings.O365AuditLogs.AppId, Settings.O365AuditLogs.AppSecret).Result;
+            }
             Client = new HttpClient();
             Client.BaseAddress = new Uri(Settings.O365AuditLogs.BaseAddress);
             Client.DefaultRequestHeaders.Clear();
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
-                ADALHelper.GetManagementToken(Settings.O365AuditLogs.Resource, Settings.AzureAd.AuthorityUrl, Settings.O365AuditLogs.AppId, Settings.O365AuditLogs.AppSecret
-                    )
-                );
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
         }
 
         /// <summary>
@@ -143,33 +157,7 @@ namespace Functions.Models
             throw new Exception($"Cannot start the subscription. {message}");
         }
 
-        /// <summary>
-        /// Stops the subscription to the specified content type.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <returns></returns>
-        public async Task StopSubscriptionAsync(string contentType)
-        {
-            HttpResponseMessage response = null;
-            int retries = 0;
-
-            do
-            {
-                response = await Client.PostAsync($"subscriptions/stop?contentType={contentType}", new StringContent(string.Empty));
-
-                if (!response.IsSuccessStatusCode)
-                    await Task.Delay((int)(RetryWaitInSec * 1000));
-
-                retries = retries + 1;
-            } while (!response.IsSuccessStatusCode && retries < RetriesMaxCount);
-
-            var content = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<RequestError>(content);
-            var message = error != null ? error.Error.Message : response.ReasonPhrase;
-
-            throw new Exception($"Cannot start the subscription. {message}");
-        }
-
+       
         /// <summary>
         /// List the current subscriptions.
         /// </summary>
@@ -204,39 +192,7 @@ namespace Functions.Models
             throw new Exception($"Cannot get the subscriptions list. {message}");
         }
 
-        /// <summary>
-        /// Gets a content records.
-        /// </summary>
-        /// <param name="content"></param>
-        /// <returns></returns>
-        public async Task<IList<Record>> GetRecordsAsync(Content content)
-        {
-            HttpResponseMessage response = null;
-            int retries = 0;
 
-            do
-            {
-                response = await Client.GetAsync(new Uri(content.ContentUri, UriKind.Absolute));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var records = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<IList<Record>>(records);
-                }
-                else
-                {
-                    await Task.Delay((int)(RetryWaitInSec * 1000));
-                }
-
-                retries = retries + 1;
-            } while (!response.IsSuccessStatusCode && retries < RetriesMaxCount);
-
-            var reponseContent = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<RequestError>(reponseContent);
-            var message = error != null ? error.Error.Message : response.ReasonPhrase;
-
-            throw new Exception($"Cannot get records. {message}");
-        }
 
         /// <summary>
         /// Gets a content records for the PowerBI workload.

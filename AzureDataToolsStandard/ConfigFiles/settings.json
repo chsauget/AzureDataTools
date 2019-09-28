@@ -7,11 +7,19 @@
   "AzureSubScriptionId": "xxxxxx-xxxxx-xxxxx-xxxxx-xxxxx",
   "ResourceGroup": "xxxxx-xxxx-xxxx-xxxxxx",
   "AzureAd": {
-    "AuthorityUrl": "https://login.microsoftonline.com/xxxxxxx/oauth2/token",
-    "Authority": "https://login.windows.net/",
+    "AuthorityUrl": "https://login.microsoftonline.com/xxxxx-xxxx-xxxx-xxxxx-xxxxxxx",
     "TenantId": "xxxxxxx-xxxx-xxxx-xxxx-xxxx",
     "ClientId": "xxxxx-b7e5-433d-8ae3-9268d28e5511",
-    "ClientSecret": "xxxxxxx"
-
+    "ClientSecret": "xxxxxxx",
+    "UseMSI": true
+  },
+  "O365AuditLogs": {
+    "BaseAddress": "https://manage.office.com/api/v1.0/xxxxx-xxxx-xxxx-xxxxx-xxxxxxx/activity/feed/",
+    "Resource": "https://manage.office.com",
+    "AppId": "xxxxx-9d67-4ad4-xxxxx-ef25a628f15c",
+    "AppSecret": "D@-6ixxxxxxxxxv9qZe1iso"
+  },
+  "SSAS": {
+    "Resource": "https://*.asazure.windows.net"
   }
 }

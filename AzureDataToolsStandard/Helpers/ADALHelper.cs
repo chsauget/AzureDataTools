@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 using System;
@@ -8,15 +9,14 @@ namespace Functions.Helpers
 {
     public static class ADALHelper
     {
-        public static string GetManagementToken(string resourceURI, string authority, string clientId, string AppSecret)
+        public static async Task<string> GetAppToken(string authority, string resourceURI, string clientId, string AppSecret)
         {
             ClientCredential credential = new ClientCredential(clientId, AppSecret);
             // Authenticate using created credentials
             AuthenticationContext authenticationContext = new AuthenticationContext(authority);
 
-            Task<AuthenticationResult> authenticationResultTask = authenticationContext.AcquireTokenAsync(resourceURI, credential);
+            AuthenticationResult authenticationResult = await authenticationContext.AcquireTokenAsync(resourceURI, credential);
 
-            AuthenticationResult authenticationResult = authenticationResultTask.Result;
             if (authenticationResult == null)
             {
                 throw new Exception("Authentication Failed.");
@@ -25,6 +25,13 @@ namespace Functions.Helpers
             {
                 return authenticationResult.AccessToken;
             }
+        }
+      
+        public static async Task<string> GetMsiTokenAsync(string Resource)
+        {
+            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            string accessToken = await azureServiceTokenProvider.GetAccessTokenAsync(Resource);
+            return accessToken;
         }
     }
 }

@@ -25,15 +25,6 @@ namespace AzureDataToolsStandard
         {
             Timer timer = await req.Content.ReadAsAsync<Timer>();
 
-            var records = await GetContentsByPeriodAsync(timer, log);
-
-            log.Info($"{records.Count} records found.");
-
-
-            return req.CreateResponse(HttpStatusCode.OK, records);
-        }
-        public static async Task<List<Record>> GetContentsByPeriodAsync(Timer timer, TraceWriter log)
-        {
             O365ManagementActivityClient client = new O365ManagementActivityClient();
             var subscriptions = await client.ListSubscriptionsAsync();
             var auditGeneralSubscription = subscriptions.FirstOrDefault(i => i.ContentType.Equals(O365ManagementActivityClient.AuditGeneralContentTypeName,
@@ -55,7 +46,7 @@ namespace AzureDataToolsStandard
                 records.AddRange(await client.GetPowerBIRecordsAsync(content));
             }
 
-            return records;
+            return req.CreateResponse(HttpStatusCode.OK, records);
         }
 
         public class Timer

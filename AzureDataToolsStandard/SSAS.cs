@@ -4,17 +4,23 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Functions.Helpers;
+using Functions.Infrastructure;
+using Functions.Infrastructure.Config;
 using Microsoft.AnalysisServices;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AzureDataToolsStandard
 {
     public static class SSAS
     {
+        private static readonly AppSettings Settings =
+             ServiceProviderConfiguration.GetServiceProvider().GetService<AppSettings>();
         [FunctionName("SSAS")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequestMessage req, TraceWriter log)
         {
@@ -25,11 +31,11 @@ namespace AzureDataToolsStandard
 
                 if(ssasQuery.AppId is null)
                 {
-                    _token = await GetMsiTokenAsync();
+                    _token = await ADALHelper.GetMsiTokenAsync(Settings.SSAS.Resource);
                 }
                 else
                 {
-                    _token = await GetAppToken(ssasQuery.TenantId,ssasQuery.AppId,ssasQuery.AppSecret);
+                    _token = await ADALHelper.GetAppToken(Settings.AzureAd.AuthorityUrl, Settings.SSAS.Resource, ssasQuery.AppId,ssasQuery.AppSecret);
                 }
 
                 Server cube_server = new Server();
@@ -67,23 +73,6 @@ namespace AzureDataToolsStandard
             public string AppSecret { get; set; }
 
         }
-        private static async Task<string> GetAppToken(string TenantId, string AppId, string appSecret)
-        {
-            string resourceURI = "https://*.asazure.windows.net";
 
-            string authority = "https://login.windows.net/" + TenantId;
-            AuthenticationContext ac = new AuthenticationContext(authority);
-
-            ClientCredential cred = new ClientCredential(AppId, appSecret);
-            AuthenticationResult ar = await ac.AcquireTokenAsync(resourceURI, cred);
-
-            return ar.AccessToken;
-        }
-        public static async Task<string> GetMsiTokenAsync()
-        {
-            var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            string accessToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://*.asazure.windows.net");
-            return accessToken;
-        }
     }
 }
